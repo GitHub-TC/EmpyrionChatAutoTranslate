@@ -3,7 +3,7 @@
 
 Eine übersetzte Version findet ihr im EmpyrionChatAutoTranslate/bin Verzeichnis falls ihr die Mod nicht selber prüfen und compilieren wollt ;-)
 
-Oder hier: https://empyriononline.com/threads/mod-empyrionChatAutoTranslate.44246/
+Oder hier: https://empyriononline.com/threads/mod-empyrion-chat-auto-translate.45125/
 
 ### Wo für ist das?
 
@@ -67,7 +67,7 @@ English-Version:
 
 You can find a translated version in the EmpyrionChatAutoTranslate/bin directory if you do not want to check and compile the mod myself ;-)
 
-Or here: https://empyriononline.com/threads/mod-empyrionChatAutoTranslate.44246/
+Or here: https://empyriononline.com/threads/mod-empyrion-chat-auto-translate.45125/
 
 ### What is it for?
 
