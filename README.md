@@ -13,7 +13,8 @@ in welcher Spache sie kommunizieren z.B.
 	/trans set de
 	/trans set it
 
-Meldungen dieser Spieler werden dann für alle anderen übersetzt und angezeigt. Chatmeldungen anderer 
+Meldungen dieser Spieler werden dann für alle anderen übersetzt und rechts oben in der Infobox angezeigt. Chatmeldungen anderer werden
+diesem Spieler in seiner Sprache in der Infobox rechts oben angezeigt.
 
 #### Wie steuert man den MOD?
 
@@ -47,7 +48,8 @@ Eine Konfiguration kann man in der Datei (wird beim ersten Start automatisch ers
 
 vornehmen.
 
-* ServerMainLanguage: Allgemeine Sprache für die meisen Spieler auf dem Server
+* ServerMainLanguage: Allgemeine Zielsprache falls der Spieler keine Sprache eingestellt z.B. de, en, ...
+* DefaultSourceLanguage: Standardsprachkennung falls der Spieler keine Sprache eingestellt hat z.B. auto, de, en, ...
 * TranslateServiceUrl: URL für den Übersetzungsdienst
 * TanslateRespose: Übersetzung aus dem Ergebnis ermitteln
 * SupressTranslatePrefixes: Wenn die Chatmitteilung mit diesen Zeichen beginnt soll keine Übersetzung gestartet werden
@@ -77,7 +79,8 @@ in which language they communicate, e.g.
 /trans set de
 /trans set it
 
-Messages from these players will then be translated and displayed to everyone else. Chat messages from others
+Messages from these players will then be translated for everyone else and displayed in the upper right corner of the info box. Chat messages from others
+This player will be displayed in his language in the info box at the top right.
 
 #### How to control the MOD?
 
@@ -111,7 +114,8 @@ A configuration can be found in the file (automatically created on first startup
 
 make.
 
-* ServerMainLanguage: General language for most players on the server
+* ServerMainLanguage: General target language if the player does not set a language e.g. de, en, ...
+* DefaultSourceLanguage: default language identifier if the player has not set a language e.g. car, de, en, ...
 * TranslateServiceUrl: URL for the translation service
 * TanslateRespose: Find translation from the result
 * SupressTranslatePrefixes: If the chat message begins with these characters no translation should be started

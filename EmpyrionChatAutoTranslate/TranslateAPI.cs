@@ -22,10 +22,10 @@ namespace EmpyrionChatAutoTranslate
         public static string Translate(string aSourceLanguage, string aTargetLanguage, string aText, ref Dictionary<string, string> aCache)
         {
             string Result;
-            if (aCache.TryGetValue(aTargetLanguage, out Result)) return Result;
+            if (aCache.TryGetValue(aSourceLanguage + "/" + aTargetLanguage, out Result)) return Result;
 
             Result = Translate(aSourceLanguage, aTargetLanguage, aText);
-            aCache.Add(aTargetLanguage, string.Compare(aText, Result, StringComparison.InvariantCultureIgnoreCase) == 0 ? null : Result);
+            aCache.Add(aSourceLanguage + "/" + aTargetLanguage, string.Compare(aText, Result, StringComparison.InvariantCultureIgnoreCase) == 0 ? null : Result);
 
             return Result;
         }

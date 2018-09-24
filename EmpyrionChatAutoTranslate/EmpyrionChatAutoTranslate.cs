@@ -89,14 +89,14 @@ namespace EmpyrionChatAutoTranslate
                     var aReceiverTranslateInfo = ChatAutoTranslatesDB.PlayerTranslationSettings.FirstOrDefault(T => T.PlayerId == P.entityId);
                     if (TranslationNeeded(aSender, aSenderTranslateInfo, P, aReceiverTranslateInfo, aInfo)) {
                         var TranslateText = TranslateAPI.Translate(
-                            aSenderTranslateInfo   == null ? ChatAutoTranslatesDB.Configuration.ServerMainLanguage : aSenderTranslateInfo  .SelectedLanguage,
-                            aReceiverTranslateInfo == null ? ChatAutoTranslatesDB.Configuration.ServerMainLanguage : aReceiverTranslateInfo.SelectedLanguage,
+                            aSenderTranslateInfo   == null ? ChatAutoTranslatesDB.Configuration.DefaultSourceLanguage : aSenderTranslateInfo  .SelectedLanguage,
+                            aReceiverTranslateInfo == null ? ChatAutoTranslatesDB.Configuration.ServerMainLanguage    : aReceiverTranslateInfo.SelectedLanguage,
                             aInfo.msg, ref Cache);
 
                         if (TranslateText != null)
                         {
                             log($"**HandleEmpyrionChatAutoTranslate SendTranslate {aSenderTranslateInfo?.PlayerName}:{aSenderTranslateInfo?.PlayerId} to {aReceiverTranslateInfo?.PlayerName}:{aReceiverTranslateInfo?.PlayerId} clientId:{P.clientId} -> {aSenderTranslateInfo?.SelectedLanguage}", LogLevel.Debug);
-                            Request_InGameMessage_SinglePlayer(TranslateText.ToIdMsgPrio(P.entityId, MessagePriorityType.Info, 10), null, E => log($"SendTranslateToSinglePlayer: {P.playerName} -> {E}", LogLevel.Debug));
+                            Request_InGameMessage_SinglePlayer($"{aSender.playerName}:{TranslateText}".ToIdMsgPrio(P.entityId, MessagePriorityType.Info, 10), null, E => log($"SendTranslateToSinglePlayer: {P.playerName} -> {E}", LogLevel.Debug));
                         }
                     }
                 }));
