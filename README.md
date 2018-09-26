@@ -35,6 +35,8 @@ Die Kommandos funktionieren NUR im Fraktionschat! Die Übersetzung funktioniert 
 Beispiel (ServerMainLanguage: de -> Serversprache ist deutsch):
 - /trans set en
 
+Die Sprache wird gemäss ISO-639-1-Code angegeben https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
+
 Wenn nun dieser Spieler etwas im Chat schreibt bekommen alle Empänger die eine andere Sprache eingestellt haben oder die (automatisc) 
 noch auf Serversprache stehen automatisch einen Hinweis rechts oben mit dem übersetzten Text angezeigt.
 
@@ -50,6 +52,9 @@ vornehmen.
 
 * ServerMainLanguage: Allgemeine Zielsprache falls der Spieler keine Sprache eingestellt z.B. de, en, ...
 * DefaultSourceLanguage: Standardsprachkennung falls der Spieler keine Sprache eingestellt hat z.B. auto, de, en, ...
+* TranslateDisplayTime: Länge in Sekunden die die Übersetzung angezeigt wird
+* TranslateDelayTime: Verzögerung zwischen den Übersetzungsanforderungen
+* TranslateMinTextLength: Chat muss mindestes auch N Buchstaben bestehen
 * TranslateServiceUrl: URL für den Übersetzungsdienst
 * TanslateRespose: Übersetzung aus dem Ergebnis ermitteln
 * SupressTranslatePrefixes: Wenn die Chatmitteilung mit diesen Zeichen beginnt soll keine Übersetzung gestartet werden
@@ -101,6 +106,8 @@ The commands work ONLY in the fractional vote! The translation works in both glo
 Example (ServerMainLanguage: DE -> server language is German):
 - /trans set
 
+The language is specified according to ISO-639-1 code https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
+
 Now if this player writes something in the chat all recipients who have set a different language or (automatic)
 still on server language are automatically a note top right with the translated text displayed.
 
@@ -116,6 +123,9 @@ make.
 
 * ServerMainLanguage: General target language if the player does not set a language e.g. de, en, ...
 * DefaultSourceLanguage: default language identifier if the player has not set a language e.g. car, de, en, ...
+* TranslateDisplayTime: Length in seconds that the translation is displayed
+* TranslateDelayTime: Delay each translation request
+* TranslateMinTextLength: Chat must have N letter characters
 * TranslateServiceUrl: URL for the translation service
 * TanslateRespose: Find translation from the result
 * SupressTranslatePrefixes: If the chat message begins with these characters no translation should be started

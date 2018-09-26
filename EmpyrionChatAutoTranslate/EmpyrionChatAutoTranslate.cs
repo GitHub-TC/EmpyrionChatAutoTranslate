@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace EmpyrionChatAutoTranslate
 {
@@ -62,7 +63,7 @@ namespace EmpyrionChatAutoTranslate
             ChatCommands.Add(new ChatCommand(@"/trans help",                    (I, A) => ExecCommand(SubCommand.Help,     I, A), "Show the help"));
             ChatCommands.Add(new ChatCommand(@"/trans set (?<language>.*)",     (I, A) => ExecCommand(SubCommand.Set,      I, A), "Set the translation language"));
             ChatCommands.Add(new ChatCommand(@"/trans box (?<text>.+)",         (I, A) => ExecCommand(SubCommand.Box,      I, A), "Translate to a messagebox"));
-            ChatCommands.Add(new ChatCommand(@"/trans clear",                   (I, A) => ExecCommand(SubCommand.Help,     I, A), "Back to the Serverlanguage"));
+            ChatCommands.Add(new ChatCommand(@"/trans clear",                   (I, A) => ExecCommand(SubCommand.Clear,    I, A), "Back to the Serverlanguage"));
             ChatCommands.Add(new ChatCommand(@"/trans listall",                 (I, A) => ExecCommand(SubCommand.ListAll,  I, A), "List all translation settings", PermissionType.Moderator));
         }
 
@@ -78,11 +79,14 @@ namespace EmpyrionChatAutoTranslate
 
         private void SendTranslateToSinglePlayer(PlayerInfo aSender, ChatInfo aInfo)
         {
+            if (aInfo.msg.Where(Char.IsLetter).Count() < ChatAutoTranslatesDB.Configuration.TranslateMinTextLength) return;
+
             var Cache = new Dictionary<string, string>();
 
             var aSenderTranslateInfo = ChatAutoTranslatesDB.PlayerTranslationSettings.FirstOrDefault(T => T.PlayerId == aSender.entityId);
             log($"**HandleEmpyrionChatAutoTranslate Translate found {aSenderTranslateInfo?.PlayerName}:{aSenderTranslateInfo?.PlayerId} playerId:{aInfo.playerId}-> {aSenderTranslateInfo?.SelectedLanguage}", LogLevel.Message);
 
+            var Count = 0;
             Request_Player_List(L => {
                 L.list.ForEach(PI => Request_Player_Info(PI.ToId(), P =>
                 {
@@ -95,8 +99,11 @@ namespace EmpyrionChatAutoTranslate
 
                         if (TranslateText != null)
                         {
-                            log($"**HandleEmpyrionChatAutoTranslate SendTranslate {aSenderTranslateInfo?.PlayerName}:{aSenderTranslateInfo?.PlayerId} to {aReceiverTranslateInfo?.PlayerName}:{aReceiverTranslateInfo?.PlayerId} clientId:{P.clientId} -> {aSenderTranslateInfo?.SelectedLanguage}", LogLevel.Debug);
-                            Request_InGameMessage_SinglePlayer($"{aSender.playerName}:{TranslateText}".ToIdMsgPrio(P.entityId, MessagePriorityType.Info, 10), null, E => log($"SendTranslateToSinglePlayer: {P.playerName} -> {E}", LogLevel.Debug));
+                            new Thread(new ThreadStart(() =>
+                            {
+                                Thread.Sleep(Count++ * ChatAutoTranslatesDB.Configuration.TranslateDelayTime * 1000);                                log($"**HandleEmpyrionChatAutoTranslate SendTranslate {aSenderTranslateInfo?.PlayerName}:{aSenderTranslateInfo?.PlayerId} to {aReceiverTranslateInfo?.PlayerName}:{aReceiverTranslateInfo?.PlayerId} clientId:{P.clientId} -> {aSenderTranslateInfo?.SelectedLanguage}", LogLevel.Debug);
+                                Request_InGameMessage_SinglePlayer($"[c]{(aInfo.type == (byte)ChatType.Faction ? "[00ff00]" : "[ff00ff]")}{aSender.playerName}[/c]: [c][ffffff]{TranslateText}[/c]".ToIdMsgPrio(P.entityId, MessagePriorityType.Info, ChatAutoTranslatesDB.Configuration.TranslateDisplayTime), null, E => log($"SendTranslateToSinglePlayer: {P.playerName} -> {E}", LogLevel.Debug));
+                            })).Start();
                         }
                     }
                 }));
@@ -169,9 +176,7 @@ namespace EmpyrionChatAutoTranslate
             Request_Player_Info(aPlayerId.ToId(), P =>
             {
                 var TargetLanguage = GetTargetLanguage(P.entityId);
-                ShowDialog(aPlayerId, P, 
-                    TranslateAPI.Translate("de",   TargetLanguage, "Automatische Übersetzung"), 
-                    TranslateAPI.Translate("auto", TargetLanguage, aText));
+                ShowDialog(aPlayerId, P, "Empyrion Chat Auto Translate", TranslateAPI.Translate("auto", TargetLanguage, aText));
             });
         }
 
@@ -194,7 +199,7 @@ namespace EmpyrionChatAutoTranslate
 
                 data.SelectedLanguage = aLanguage;
                 SaveTranslationDB();
-                ShowDialog(aPlayerId, P, TranslateAPI.Translate("de", aLanguage, "Automatische Übersetzung"), TranslateAPI.Translate("de", aLanguage, "Automatische Übersetzung ist eingestellt auf: ") + aLanguage);
+                ShowDialog(aPlayerId, P, "Empyrion Chat Auto Translate", TranslateAPI.Translate("de", aLanguage, "Automatische Übersetzung ist eingestellt auf:") + " " + aLanguage);
             });
         }
 
@@ -204,7 +209,7 @@ namespace EmpyrionChatAutoTranslate
             {
                 ChatAutoTranslatesDB.PlayerTranslationSettings = ChatAutoTranslatesDB.PlayerTranslationSettings.Where(T => T.PlayerId != P.entityId).ToList();
                 SaveTranslationDB();
-                ShowDialog(aPlayerId, P, TranslateAPI.Translate("de", ChatAutoTranslatesDB.Configuration.ServerMainLanguage, "Automatische Übersetzung"), TranslateAPI.Translate("de", ChatAutoTranslatesDB.Configuration.ServerMainLanguage, "Automatische Übersetzung ist eingestellt auf Serversprache: " + ChatAutoTranslatesDB.Configuration.ServerMainLanguage));
+                ShowDialog(aPlayerId, P, "Empyrion Chat Auto Translate", TranslateAPI.Translate("de", ChatAutoTranslatesDB.Configuration.ServerMainLanguage, "Automatische Übersetzung ist eingestellt auf:") + " " + ChatAutoTranslatesDB.Configuration.DefaultSourceLanguage);
             });
         }
 
@@ -244,7 +249,7 @@ namespace EmpyrionChatAutoTranslate
             Request_ShowDialog_SinglePlayer(new DialogBoxData()
             {
                 Id      = aPlayerId,
-                MsgText = $"{aTitle}: [c][ffffff]{aPlayer.playerName}[-][/c] with permission [c][ffffff]{(PermissionType)aPlayer.permission}[-][/c]\n" + aMessage,
+                MsgText = $"{aTitle}: [c][ffffff]{aPlayer.playerName}[-][/c] with permission [c][ffffff]{(PermissionType)aPlayer.permission}[-][/c]\n\n" + aMessage,
             });
         }
 
@@ -256,7 +261,7 @@ namespace EmpyrionChatAutoTranslate
                 //[c][hexid][-][/c]    [c][019245]test[-][/c].
 
                 ShowDialog(aPlayerId, P, "Commands",
-                    "\n" + String.Join("\n", GetChatCommandsForPermissionLevel((PermissionType)P.permission).Select(C => C.MsgString()).ToArray()) +
+                    String.Join("\n", GetChatCommandsForPermissionLevel((PermissionType)P.permission).Select(C => C.MsgString()).ToArray()) +
                     $"\n\n[c][c0c0c0]{CurrentAssembly.GetAttribute<AssemblyTitleAttribute>()?.Title} by {CurrentAssembly.GetAttribute<AssemblyCompanyAttribute>()?.Company} Version:{CurrentAssembly.GetAttribute<AssemblyFileVersionAttribute>()?.Version}[-][/c]"
                     );
             });
