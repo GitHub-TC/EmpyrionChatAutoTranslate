@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Web;
 using EmpyrionAPIDefinitions;
 
@@ -19,19 +20,30 @@ namespace EmpyrionChatAutoTranslate
             LogDB?.Invoke(aText, aLevel);
         }
 
-        public static string Translate(string aSourceLanguage, string aTargetLanguage, string aText, ref Dictionary<string, string> aCache)
+        static int DelayCounter;
+
+        public static string Translate(string aSourceLanguage, string aTargetLanguage, string aText, ref Dictionary<string, string> aCache, int aDelayRequest)
         {
-            string Result;
-            if (aCache.TryGetValue(aSourceLanguage + "/" + aTargetLanguage, out Result)) return Result;
+            lock (aCache)
+            {
+                string Result;
+                if (aCache.TryGetValue(aSourceLanguage + "/" + aTargetLanguage, out Result)) return Result;
 
-            Result = Translate(aSourceLanguage, aTargetLanguage, aText);
-            aCache.Add(aSourceLanguage + "/" + aTargetLanguage, string.Compare(aText, Result, StringComparison.InvariantCultureIgnoreCase) == 0 ? null : Result);
+                if (aCache.Count == 0) DelayCounter = 0;
 
-            return Result;
+                Thread.Sleep(DelayCounter++ * aDelayRequest * 1000);
+
+                Result = Translate(aSourceLanguage, aTargetLanguage, aText);
+                aCache.Add(aSourceLanguage + "/" + aTargetLanguage, string.Compare(aText, Result, StringComparison.InvariantCultureIgnoreCase) == 0 ? null : Result);
+
+                return Result;
+            }
         }
 
         public static string Translate(string aSourceLanguage, string aTargetLanguage, string aText)
         {
+            if (string.IsNullOrEmpty(TranslateServiceUrl)) return aText;
+
             string url = null;
             try
             {
