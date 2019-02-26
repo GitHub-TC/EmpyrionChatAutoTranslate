@@ -50,7 +50,7 @@ namespace EmpyrionChatAutoTranslate
         {
             GameAPI = aGameAPI;
             verbose = true;
-            this.LogLevel = LogLevel.Message;
+            this.LogLevel = LogLevel.Error;
             TranslateAPI.LogDB = log;
 
             log($"**HandleEmpyrionChatAutoTranslate loaded: {string.Join(" ", Environment.GetCommandLineArgs())}", LogLevel.Message);
