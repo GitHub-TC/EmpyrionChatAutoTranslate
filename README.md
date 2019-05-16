@@ -22,18 +22,18 @@ Die Kommandos funktionieren NUR im Fraktionschat! Die Übersetzung funktioniert 
 
 #### Hilfe
 
-* /trans help : Zeigt die Kommandos der Mod an
+* \trans help : Zeigt die Kommandos der Mod an
 
 #### Übersetzungseinstellungen/Möglichkeiten
 
-* /trans set <language> => Sprache für den Spieler auf 'language' stellen z.B. de, en, it, ...
-* /trans help => Liste der Kommandos
-* /trans box <text> => Übersetzt den Text in den für den Spieler eingestellte Sprache und zeigt ihn an
-* /trans clear => Stellt die Sprache für den Spieler wirder auf die Serversprache zurück
-* /trans listall => Listet alle Spracheinstellungen auf (nur ab Moderator erlaubt)
+* \trans set <language> => Sprache für den Spieler auf 'language' stellen z.B. de, en, it, ...
+* \trans help => Liste der Kommandos
+* \trans box <text> => Übersetzt den Text in den für den Spieler eingestellte Sprache und zeigt ihn an
+* \trans clear => Stellt die Sprache für den Spieler wirder auf die Serversprache zurück
+* \trans listall => Listet alle Spracheinstellungen auf (nur ab Moderator erlaubt)
 
 Beispiel (ServerMainLanguage: de -> Serversprache ist deutsch):
-- /trans set en
+- \trans set en
 
 Die Sprache wird gemäss ISO-639-1-Code angegeben https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
 
@@ -93,18 +93,18 @@ The commands work ONLY in the fractional vote! The translation works in both glo
 
 #### Help
 
-* /trans help: Displays the commands of the mod
+* \trans help: Displays the commands of the mod
 
 #### Translation Settings / Options
 
-* /trans set <language> => Set language for the player to 'language' e.g. de, en, it, ...
-* /trans help => list of commands
-* /trans box <text> => Translates the text into the language set for the player and displays it
-* /trans clear => Returns the language for the player to the server language
-* /trans listall => lists all language settings (only allowed from moderator)
+* \trans set <language> => Set language for the player to 'language' e.g. de, en, it, ...
+* \trans help => list of commands
+* \trans box <text> => Translates the text into the language set for the player and displays it
+* \trans clear => Returns the language for the player to the server language
+* \trans listall => lists all language settings (only allowed from moderator)
 
 Example (ServerMainLanguage: DE -> server language is German):
-- /trans set
+- \trans set
 
 The language is specified according to ISO-639-1 code https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
 

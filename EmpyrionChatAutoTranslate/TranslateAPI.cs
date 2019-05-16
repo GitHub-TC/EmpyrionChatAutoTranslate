@@ -1,10 +1,9 @@
-﻿using System;
+﻿using EmpyrionNetAPIDefinitions;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Web;
-using EmpyrionAPIDefinitions;
 
 namespace EmpyrionChatAutoTranslate
 {
@@ -22,7 +21,7 @@ namespace EmpyrionChatAutoTranslate
 
         static int DelayCounter;
 
-        public static string Translate(string aSourceLanguage, string aTargetLanguage, string aText, ref Dictionary<string, string> aCache, int aDelayRequest)
+        public static string Translate(string aSourceLanguage, string aTargetLanguage, string aText, Dictionary<string, string> aCache, int aDelayRequest)
         {
             lock (aCache)
             {
