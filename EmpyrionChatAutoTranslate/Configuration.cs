@@ -27,6 +27,7 @@ namespace EmpyrionChatAutoTranslate
     {
         [JsonConverter(typeof(StringEnumConverter))]
         public LogLevel LogLevel { get; set; }
+        public string CommandPrefix { get; set; } = "/\\";
         public string ServerMainLanguage { get; set; } = "de";
         public string DefaultSourceLanguage { get; set; } = "auto";
         public int TranslateDisplayTime { get; set; } = 10;

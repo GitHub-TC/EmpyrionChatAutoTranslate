@@ -58,14 +58,15 @@ namespace EmpyrionChatAutoTranslate
 
             InitializeDB();
             LogLevel = Configuration.Current.LogLevel;
+            ChatCommandManager.CommandPrefix = Configuration.Current.CommandPrefix;
 
             Event_ChatMessage += async (C) => await EmpyrionChatAutoTranslate_Event_ChatMessage(C);
 
-            ChatCommands.Add(new ChatCommand(@"\\trans help",                    (I, A) => ExecCommand(SubCommand.Help,     I, A), "Show the help"));
-            ChatCommands.Add(new ChatCommand(@"\\trans set (?<language>.*)",     (I, A) => ExecCommand(SubCommand.Set,      I, A), "Set the translation language"));
-            ChatCommands.Add(new ChatCommand(@"\\trans box (?<text>.+)",         (I, A) => ExecCommand(SubCommand.Box,      I, A), "Translate to a messagebox"));
-            ChatCommands.Add(new ChatCommand(@"\\trans clear",                   (I, A) => ExecCommand(SubCommand.Clear,    I, A), "Back to the Serverlanguage"));
-            ChatCommands.Add(new ChatCommand(@"\\trans listall",                 (I, A) => ExecCommand(SubCommand.ListAll,  I, A), "List all translation settings", PermissionType.Moderator));
+            ChatCommands.Add(new ChatCommand(@"trans help",                    (I, A) => ExecCommand(SubCommand.Help,     I, A), "Show the help"));
+            ChatCommands.Add(new ChatCommand(@"trans set (?<language>.*)",     (I, A) => ExecCommand(SubCommand.Set,      I, A), "Set the translation language"));
+            ChatCommands.Add(new ChatCommand(@"trans box (?<text>.+)",         (I, A) => ExecCommand(SubCommand.Box,      I, A), "Translate to a messagebox"));
+            ChatCommands.Add(new ChatCommand(@"trans clear",                   (I, A) => ExecCommand(SubCommand.Clear,    I, A), "Back to the Serverlanguage"));
+            ChatCommands.Add(new ChatCommand(@"trans listall",                 (I, A) => ExecCommand(SubCommand.ListAll,  I, A), "List all translation settings", PermissionType.Moderator));
         }
 
         private async Task EmpyrionChatAutoTranslate_Event_ChatMessage(ChatInfo info)
