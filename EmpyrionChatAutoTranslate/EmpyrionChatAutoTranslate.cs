@@ -60,7 +60,7 @@ namespace EmpyrionChatAutoTranslate
             LogLevel = Configuration.Current.LogLevel;
             ChatCommandManager.CommandPrefix = Configuration.Current.CommandPrefix;
 
-            Event_ChatMessage += async (C) => await EmpyrionChatAutoTranslate_Event_ChatMessage(C);
+            Event_ChatMessage += (C) => EmpyrionChatAutoTranslate_Event_ChatMessage(C).Wait();
 
             ChatCommands.Add(new ChatCommand(@"trans help",                    (I, A) => ExecCommand(SubCommand.Help,     I, A), "Show the help"));
             ChatCommands.Add(new ChatCommand(@"trans set (?<language>.*)",     (I, A) => ExecCommand(SubCommand.Set,      I, A), "Set the translation language"));
@@ -71,13 +71,20 @@ namespace EmpyrionChatAutoTranslate
 
         private async Task EmpyrionChatAutoTranslate_Event_ChatMessage(ChatInfo info)
         {
-            var UpperMsg = info.msg.ToUpper();
-            if (Configuration.Current.SupressTranslatePrefixes.Any(M => UpperMsg.StartsWith(M))) return;
+            try
+            {
+                var UpperMsg = info.msg.ToUpper();
+                if (Configuration.Current.SupressTranslatePrefixes.Any(M => UpperMsg.StartsWith(M))) return;
 
-            log($"**HandleEmpyrionChatAutoTranslate Translate {info.type}: playerId:{info.playerId} recipientEntityId:{info.recipientEntityId} recipientFactionId:{info.recipientFactionId} msg:{info.msg}", LogLevel.Message);
+                log($"**HandleEmpyrionChatAutoTranslate Translate {info.type}: playerId:{info.playerId} recipientEntityId:{info.recipientEntityId} recipientFactionId:{info.recipientFactionId} msg:{info.msg}", LogLevel.Message);
 
-            var P = await Request_Player_Info(info.playerId.ToId());
-            await SendTranslateToSinglePlayer(P, info);
+                var P = await Request_Player_Info(info.playerId.ToId());
+                await SendTranslateToSinglePlayer(P, info);
+            }
+            catch (Exception error)
+            {
+                log($"ChatAutoTranslate_Event_ChatMessage: {error}", LogLevel.Error);
+            }
         }
 
         private async Task SendTranslateToSinglePlayer(PlayerInfo aSender, ChatInfo aInfo)
@@ -152,17 +159,24 @@ namespace EmpyrionChatAutoTranslate
 
         private async Task ExecCommand(SubCommand aCommand, ChatInfo info, Dictionary<string, string> args)
         {
-            log($"**HandleEmpyrionChatAutoTranslate {info.type}#{aCommand}:{info.msg} {args.Aggregate("", (s, i) => s + i.Key + "/" + i.Value + " ")}", LogLevel.Message);
-
-            if (info.type != (byte)ChatType.Faction) return;
-
-            switch (aCommand)
+            try
             {
-                case SubCommand.Help    : await DisplayHelp               (info.playerId, ""); break;
-                case SubCommand.Set     : await SetTranslation            (info.playerId, args["language"]); break;
-                case SubCommand.Box     : await Translate                 (info.playerId, args["text"]); break;
-                case SubCommand.Clear   : await ClearTranslation          (info.playerId); break;
-                case SubCommand.ListAll : await ListAllChatAutoTranslates (info.playerId); break;
+                log($"**HandleEmpyrionChatAutoTranslate {info.type}#{aCommand}:{info.msg} {args.Aggregate("", (s, i) => s + i.Key + "/" + i.Value + " ")}", LogLevel.Message);
+
+                if (info.type != (byte)ChatType.Faction) return;
+
+                switch (aCommand)
+                {
+                    case SubCommand.Help    : await DisplayHelp               (info.playerId, ""); break;
+                    case SubCommand.Set     : await SetTranslation            (info.playerId, args["language"]); break;
+                    case SubCommand.Box     : await Translate                 (info.playerId, args["text"]); break;
+                    case SubCommand.Clear   : await ClearTranslation          (info.playerId); break;
+                    case SubCommand.ListAll : await ListAllChatAutoTranslates (info.playerId); break;
+                }
+            }
+            catch (Exception error)
+            {
+                log($"ExecCommand: {error}", LogLevel.Error);
             }
         }
 
