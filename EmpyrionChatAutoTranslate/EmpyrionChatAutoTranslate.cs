@@ -52,9 +52,9 @@ namespace EmpyrionChatAutoTranslate
         public override void Initialize(ModGameAPI aGameAPI)
         {
             GameAPI = aGameAPI;
-            TranslateAPI.LogDB = (S, L) => log(S, L);
+            TranslateAPI.LogDB = (S, L) => Log(S, L);
 
-            log($"**HandleEmpyrionChatAutoTranslate loaded: {string.Join(" ", Environment.GetCommandLineArgs())}", LogLevel.Message);
+            Log($"**HandleEmpyrionChatAutoTranslate loaded: {string.Join(" ", Environment.GetCommandLineArgs())}", LogLevel.Message);
 
             InitializeDB();
             LogLevel = Configuration.Current.LogLevel;
@@ -76,14 +76,14 @@ namespace EmpyrionChatAutoTranslate
                 var UpperMsg = info.msg.ToUpper();
                 if (Configuration.Current.SupressTranslatePrefixes.Any(M => UpperMsg.StartsWith(M))) return;
 
-                log($"**HandleEmpyrionChatAutoTranslate Translate {info.type}: playerId:{info.playerId} recipientEntityId:{info.recipientEntityId} recipientFactionId:{info.recipientFactionId} msg:{info.msg}", LogLevel.Message);
+                Log($"**HandleEmpyrionChatAutoTranslate Translate {info.type}: playerId:{info.playerId} recipientEntityId:{info.recipientEntityId} recipientFactionId:{info.recipientFactionId} msg:{info.msg}", LogLevel.Message);
 
                 var P = await Request_Player_Info(info.playerId.ToId());
                 await SendTranslateToSinglePlayer(P, info);
             }
             catch (Exception error)
             {
-                log($"ChatAutoTranslate_Event_ChatMessage: {error}", LogLevel.Error);
+                Log($"ChatAutoTranslate_Event_ChatMessage: {error}", LogLevel.Error);
             }
         }
 
@@ -94,7 +94,7 @@ namespace EmpyrionChatAutoTranslate
             var Cache = new Dictionary<string, string>();
 
             var aSenderTranslateInfo = Configuration.Current.PlayerTranslationSettings.FirstOrDefault(T => T.PlayerId == aSender.entityId);
-            log($"**HandleEmpyrionChatAutoTranslate Translate found {aSenderTranslateInfo?.PlayerName}:{aSenderTranslateInfo?.PlayerId} playerId:{aInfo.playerId}-> {aSenderTranslateInfo?.SelectedLanguage}", LogLevel.Message);
+            Log($"**HandleEmpyrionChatAutoTranslate Translate found {aSenderTranslateInfo?.PlayerName}:{aSenderTranslateInfo?.PlayerId} playerId:{aInfo.playerId}-> {aSenderTranslateInfo?.SelectedLanguage}", LogLevel.Message);
 
             var L = await Request_Player_List();
 
@@ -117,7 +117,7 @@ namespace EmpyrionChatAutoTranslate
 
                     if (TranslateText != null)
                     {
-                        log($"**HandleEmpyrionChatAutoTranslate SendTranslate {aSenderTranslateInfo?.PlayerName}:{aSenderTranslateInfo?.PlayerId} to {aReceiverTranslateInfo?.PlayerName}:{aReceiverTranslateInfo?.PlayerId} clientId:{P.clientId} -> {aSenderTranslateInfo?.SelectedLanguage}", LogLevel.Debug);
+                        Log($"**HandleEmpyrionChatAutoTranslate SendTranslate {aSenderTranslateInfo?.PlayerName}:{aSenderTranslateInfo?.PlayerId} to {aReceiverTranslateInfo?.PlayerName}:{aReceiverTranslateInfo?.PlayerId} clientId:{P.clientId} -> {aSenderTranslateInfo?.SelectedLanguage}", LogLevel.Debug);
                         await Request_InGameMessage_SinglePlayer($"[c]{(aInfo.type == (byte)ChatType.Faction ? "[00ff00]" : "[ff00ff]")}{aSender.playerName}[/c]: [c][ffffff]{TranslateText}[/c]".ToIdMsgPrio(P.entityId, MessagePriorityType.Info, Configuration.Current.TranslateDisplayTime));
                     }
                 })).Start();
@@ -161,7 +161,7 @@ namespace EmpyrionChatAutoTranslate
         {
             try
             {
-                log($"**HandleEmpyrionChatAutoTranslate {info.type}#{aCommand}:{info.msg} {args.Aggregate("", (s, i) => s + i.Key + "/" + i.Value + " ")}", LogLevel.Message);
+                Log($"**HandleEmpyrionChatAutoTranslate {info.type}#{aCommand}:{info.msg} {args.Aggregate("", (s, i) => s + i.Key + "/" + i.Value + " ")}", LogLevel.Message);
 
                 if (info.type != (byte)ChatType.Faction) return;
 
@@ -176,7 +176,7 @@ namespace EmpyrionChatAutoTranslate
             }
             catch (Exception error)
             {
-                log($"ExecCommand: {error}", LogLevel.Error);
+                Log($"ExecCommand: {error}", LogLevel.Error);
             }
         }
 
@@ -226,7 +226,7 @@ namespace EmpyrionChatAutoTranslate
 
         private void LogError(string aPrefix, ErrorInfo aError)
         {
-            log($"{aPrefix} Error: {aError.errorType} {aError.ToString()}", LogLevel.Error);
+            Log($"{aPrefix} Error: {aError.errorType} {aError.ToString()}", LogLevel.Error);
         }
 
         private int getIntParam(Dictionary<string, string> aArgs, string aParameterName)
