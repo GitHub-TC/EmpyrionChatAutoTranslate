@@ -25,17 +25,24 @@ namespace EmpyrionChatAutoTranslate
         {
             lock (aCache)
             {
-                string Result;
-                if (aCache.TryGetValue(aSourceLanguage + "/" + aTargetLanguage, out Result)) return Result;
+                try
+                {
+                    if (aCache.TryGetValue(aSourceLanguage + "/" + aTargetLanguage, out string Result)) return Result;
 
-                if (aCache.Count == 0) DelayCounter = 0;
+                    if (aCache.Count == 0) DelayCounter = 0;
 
-                Thread.Sleep(DelayCounter++ * aDelayRequest * 1000);
+                    Thread.Sleep(DelayCounter++ * aDelayRequest * 1000);
 
-                Result = Translate(aSourceLanguage, aTargetLanguage, aText);
-                aCache.Add(aSourceLanguage + "/" + aTargetLanguage, string.Compare(aText, Result, StringComparison.InvariantCultureIgnoreCase) == 0 ? null : Result);
+                    Result = Translate(aSourceLanguage, aTargetLanguage, aText);
+                    aCache.Add(aSourceLanguage + "/" + aTargetLanguage, string.Compare(aText, Result, StringComparison.InvariantCultureIgnoreCase) == 0 ? null : Result);
 
-                return Result;
+                    return Result;
+                }
+                catch (Exception error)
+                {
+                    log($"Translate: {error}", LogLevel.Error);
+                    return null;
+                }
             }
         }
 
@@ -67,7 +74,7 @@ namespace EmpyrionChatAutoTranslate
             }
             catch (Exception Error)
             {
-                log($"ChatAutoTranslate Error:'{Error.Message}' Url:{url}", LogLevel.Error);
+                log($"ChatAutoTranslate Error:'{Error}' Url:{url}", LogLevel.Error);
                 return aText;
             }
         }
